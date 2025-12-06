@@ -10,7 +10,26 @@ let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
 let ballSpeedX = 4;
 let ballSpeedY = 2;
-
+// Audio setup for beep sounds
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playBeep(paddleY) {
+    const freq = 200 + (paddleY / canvas.height) * 600; // Map Y to 200-800Hz
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
+// Resume AudioContext on first user interaction (required by some browsers)
+canvas.addEventListener('click', () => {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}, { once: true });
 function drawRect(x, y, w, h, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
@@ -46,6 +65,7 @@ function update() {
     ) {
         ballSpeedX = -ballSpeedX;
         ballX = paddleWidth + ballRadius;
+        playBeep(playerY);
     }
 
     if (
@@ -55,6 +75,7 @@ function update() {
     ) {
         ballSpeedX = -ballSpeedX;
         ballX = canvas.width - paddleWidth - ballRadius;
+        playBeep(aiY);
     }
 
     if (ballX < 0 || ballX > canvas.width) {
