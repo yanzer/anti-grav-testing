@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  background: #0d1117; /* dark background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+canvas {
+  background: #1e293b;
+  border: 2px solid #58a6ff;
+  box-shadow: 0 0 20px rgba(88,166,255,0.5);
+}
